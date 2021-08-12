@@ -107,6 +107,7 @@ public class EditorGUI extends JFrame{
                 FileHandler.saveToFile(editorPane.getText());
                 newFileDialog.setVisible(false);
                 newFileField.setText("");
+                saveButton.setVisible(true);
             }
         });
 
