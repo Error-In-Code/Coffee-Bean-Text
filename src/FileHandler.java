@@ -14,13 +14,38 @@ public class FileHandler {
         data = "";
         try{
             file = new File(filePath);
-            fileScanner = new Scanner(file);
-
-            while(fileScanner.hasNextLine()){
-                data = data + fileScanner.nextLine() + "\n";
+            if(!file.createNewFile()){
+                fileScanner = new Scanner(file);
+                while(fileScanner.hasNextLine()){
+                    data = data + fileScanner.nextLine() + "\n";
+                }
             }
+
         }catch(FileNotFoundException e){
             System.err.println("FILE NOT FOUND");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void openFile(File givenFile){
+        data = "";
+        try{
+            file = givenFile;
+            if(!file.createNewFile()){
+                fileScanner = new Scanner(file);
+
+                while(fileScanner.hasNextLine()){
+                    data = data + fileScanner.nextLine() + "\n";
+                }
+            }
+
+
+        }catch(FileNotFoundException e){
+            System.err.println("FILE NOT FOUND");
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
