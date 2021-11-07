@@ -1,8 +1,13 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Locale;
 
 public class EditorGUI extends JFrame{
 
@@ -25,25 +30,33 @@ public class EditorGUI extends JFrame{
     private Font[] fonts;
     private String[] fontNames;
 
-    final JFileChooser fileChooser = new JFileChooser();
-    FileNameExtensionFilter textFileFilter = new FileNameExtensionFilter("Text file", "txt");
-    JDialog newFileDialog = new JDialog();
-    JPanel newFilePanel = new JPanel();
-    JTextField newFileField = new JTextField();
-    JButton createNewFile = new JButton("Create");
-    JLabel nameFileLabel = new JLabel("Enter the name of your file:");
+    private final JFileChooser fileChooser = new JFileChooser();
+    private FileNameExtensionFilter textFileFilter = new FileNameExtensionFilter("Text file", "txt");
+    private JDialog newFileDialog = new JDialog();
+    private JPanel newFilePanel = new JPanel();
+    private JTextField newFileField = new JTextField();
+    private JButton createNewFile = new JButton("Create");
+    private JLabel nameFileLabel = new JLabel("Enter the name of your file:");
 
-    JDialog fontsDialog = new JDialog();
-    JPanel fontsPanel = new JPanel();
-    JTextField fontSizeField = new JTextField();
-    JScrollPane fontScroll = new JScrollPane();
-    JList fontList;
+    private JDialog fontsDialog = new JDialog();
+    private JPanel fontsPanel = new JPanel();
+    private JTextField fontSizeField = new JTextField();
+    private JScrollPane fontScroll = new JScrollPane();
+    private JList fontList;
+    private JLabel sizeLabel = new JLabel("Set Font Size");
+
+    private int selectFont = 1;
+    private float fontSize = 18f;
 
     private String newFilePath;
 
     public EditorGUI(){
         // Load Fonts
         fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+        fontNames = new String[fonts.length];
+        for(int i = 0; i < fonts.length; i++){
+            fontNames[i] = fonts[i].getName();
+        }
 
         // Load Icon
         Image icon = Toolkit.getDefaultToolkit().getImage("src/TextEditorIcon.png");
@@ -80,24 +93,26 @@ public class EditorGUI extends JFrame{
         createNewFile.setBounds(50, 100, 100, 25);
         nameFileLabel.setBounds(50, 10, 300, 25);
 
-        fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+
         fontList = new JList(fontNames);
 
 
         fontsDialog.setSize(400, 300);
         fontsDialog.add(fontsPanel);
-        fontsDialog.setName("Set Font");
+        fontsDialog.setTitle("Set Font");
 
         fontsPanel.setLayout(null);
 
         fontsPanel.add(fontSizeField);
         fontsPanel.add(fontScroll);
+        fontsPanel.add(sizeLabel);
         fontScroll.setViewportView(fontList);
 
-        fontSizeField.setBounds(50, 20, 50, 25);
-        fontScroll.setBounds(50, 80, 200, 100);
+        fontSizeField.setBounds(25, 20, 50, 25);
+        fontScroll.setBounds(25, 70, 325, 150);
+        sizeLabel.setBounds(80, 20, 150, 25);
 
-        editorPane.setFont(fonts[0].deriveFont(18f));
+        updateFont();
 
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -168,6 +183,36 @@ public class EditorGUI extends JFrame{
             }
         });
 
+        fontList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                selectFont = fontList.getSelectedIndex();
+                updateFont();
+            }
+        });
+
+        fontSizeField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fontSize = Float.parseFloat(fontSizeField.getText());
+                updateFont();
+            }
+        });
+
+        fontSizeField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                String value = fontSizeField.getText();
+                int l = value.length();
+                if ((ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE || ke.getKeyCode() == KeyEvent.VK_ENTER) {
+                    fontSizeField.setEditable(true);
+//                    label.setText("");
+                } else {
+                    fontSizeField.setEditable(false);
+//                    label.setText("* Enter only numeric digits(0-9)");
+                }
+            }
+        });
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         editorPane.setVisible(false);
@@ -180,5 +225,9 @@ public class EditorGUI extends JFrame{
         editorPane.setVisible(true);
         editorPane.removeAll();
         editorPane.setText(fileData);
+    }
+
+    private void updateFont(){
+        editorPane.setFont(fonts[selectFont].deriveFont(fontSize));
     }
 }
