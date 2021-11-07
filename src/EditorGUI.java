@@ -200,15 +200,11 @@ public class EditorGUI extends JFrame{
         });
 
         fontSizeField.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                String value = fontSizeField.getText();
-                int l = value.length();
-                if ((ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE || ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    fontSizeField.setEditable(true);
-//                    label.setText("");
-                } else {
-                    fontSizeField.setEditable(false);
-//                    label.setText("* Enter only numeric digits(0-9)");
+            public void keyTyped(KeyEvent ke) {
+                char chr = ke.getKeyChar();
+
+                if(!Character.isDigit(chr)){
+                    ke.consume();
                 }
             }
         });
