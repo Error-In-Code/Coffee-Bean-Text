@@ -53,6 +53,17 @@ public class FileHandler {
     public static String getFileData(){
         return data;
     }
+    public static String getFileName(){
+        try{
+            return file.getName();
+        }catch(NullPointerException e){
+            return "Untitled";
+        }
+
+    }
+    public static void closeFile(){
+        file = null;
+    }
 
     public static void saveToFile(String data){
         try {

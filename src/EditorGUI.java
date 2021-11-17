@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Locale;
 
 public class EditorGUI extends JFrame{
 
@@ -74,7 +73,7 @@ public class EditorGUI extends JFrame{
         fileMenu.add(newButton);
         menuBar.add(editMenu);
         editMenu.add(fontButton);
-        setTitle("Text Editor");
+        setTitle("CoffeeBean Text Editor");
         setIconImage(icon);
 
         // Set up dialogs
@@ -161,6 +160,7 @@ public class EditorGUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveButton.setVisible(false);
+                FileHandler.closeFile();
                 loadFile("");
             }
         });
@@ -221,6 +221,8 @@ public class EditorGUI extends JFrame{
         editorPane.setVisible(true);
         editorPane.removeAll();
         editorPane.setText(fileData);
+
+        this.setTitle("CoffeeBean - " + FileHandler.getFileName());
     }
 
     private void updateFont(){
